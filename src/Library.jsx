@@ -57,17 +57,17 @@ const inputStyle = {
   color: "#e8dfc8",
   fontFamily: "Georgia, serif",
   fontStyle: "italic",
-  fontSize: 17,
+  fontSize: 16,
   outline: "none",
   boxSizing: "border-box",
 };
 const labelStyle = {
   display: "block",
-  fontSize: 12,
+  fontSize: 11,
   letterSpacing: "0.16em",
   textTransform: "uppercase",
   color: "#554d40",
-  marginBottom: 9,
+  marginBottom: 8,
   fontFamily: "Georgia, serif",
 };
 
@@ -93,12 +93,12 @@ function BookCard({ book, onEdit, onDelete }) {
     >
       <div
         style={{
-          height: 280,
+          height: 240,
           background: coverUrl ? "#1a1410" : fallback.bg,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 56,
+          fontSize: 48,
           position: "relative",
           overflow: "hidden",
           flexShrink: 0,
@@ -116,12 +116,12 @@ function BookCard({ book, onEdit, onDelete }) {
         <div
           style={{
             position: "absolute",
-            top: 12,
-            left: 12,
-            fontSize: 11,
+            top: 10,
+            left: 10,
+            fontSize: 10,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            padding: "5px 12px",
+            padding: "4px 10px",
             border: `1px solid ${STATUS_COLORS[book.status]}60`,
             color: STATUS_COLORS[book.status],
             background: `${STATUS_COLORS[book.status]}25`,
@@ -131,13 +131,13 @@ function BookCard({ book, onEdit, onDelete }) {
           {STATUS_LABELS[book.status]}
         </div>
       </div>
-      <div style={{ padding: "18px 20px 14px", flex: 1 }}>
+      <div style={{ padding: "14px 16px 12px", flex: 1 }}>
         <div
           style={{
-            fontSize: 18,
+            fontSize: 16,
             color: "#e8dfc8",
             lineHeight: 1.3,
-            marginBottom: 8,
+            marginBottom: 6,
             fontFamily: "Georgia, serif",
           }}
         >
@@ -145,10 +145,10 @@ function BookCard({ book, onEdit, onDelete }) {
         </div>
         <div
           style={{
-            fontSize: 15,
+            fontSize: 13,
             color: "#7a6f60",
             fontStyle: "italic",
-            marginBottom: 6,
+            marginBottom: 4,
             fontFamily: "Georgia, serif",
           }}
         >
@@ -156,7 +156,7 @@ function BookCard({ book, onEdit, onDelete }) {
         </div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 11,
             color: "#554d40",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
@@ -166,7 +166,7 @@ function BookCard({ book, onEdit, onDelete }) {
           {book.genre || ""}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 1, borderTop: "1px solid #2e271c" }}>
+      <div style={{ display: "flex", borderTop: "1px solid #2e271c" }}>
         <button
           onClick={() => onEdit(book)}
           style={{
@@ -176,10 +176,10 @@ function BookCard({ book, onEdit, onDelete }) {
             borderRight: "1px solid #2e271c",
             color: "#c8a96a",
             fontFamily: "Georgia, serif",
-            fontSize: 13,
-            padding: "12px 8px",
+            fontSize: 12,
+            padding: "11px 6px",
             cursor: "pointer",
-            letterSpacing: "0.08em",
+            letterSpacing: "0.06em",
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.background = "rgba(200,169,106,0.08)")
@@ -198,10 +198,10 @@ function BookCard({ book, onEdit, onDelete }) {
             border: "none",
             color: "#c46060",
             fontFamily: "Georgia, serif",
-            fontSize: 13,
-            padding: "12px 8px",
+            fontSize: 12,
+            padding: "11px 6px",
             cursor: "pointer",
-            letterSpacing: "0.08em",
+            letterSpacing: "0.06em",
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.background = "rgba(196,96,96,0.08)")
@@ -240,8 +240,7 @@ function BookModal({ book, onClose, onSave, userId }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const localUrl = URL.createObjectURL(file);
-    setPreview(localUrl);
+    setPreview(URL.createObjectURL(file));
     const ext = file.name.split(".").pop();
     const path = `${userId}/${Date.now()}.${ext}`;
     const { error } = await supabase.storage
@@ -275,7 +274,7 @@ function BookModal({ book, onClose, onSave, userId }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
+        padding: 16,
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
@@ -283,9 +282,9 @@ function BookModal({ book, onClose, onSave, userId }) {
         style={{
           background: "#1d1812",
           border: "1px solid #3d3426",
-          padding: "48px",
-          width: 560,
-          maxWidth: "100%",
+          padding: "clamp(24px, 4vw, 48px)",
+          width: "100%",
+          maxWidth: 540,
           position: "relative",
           maxHeight: "90vh",
           overflowY: "auto",
@@ -297,7 +296,7 @@ function BookModal({ book, onClose, onSave, userId }) {
             top: 14,
             left: 18,
             color: "#3d3426",
-            fontSize: 13,
+            fontSize: 12,
           }}
         >
           ✦
@@ -308,7 +307,7 @@ function BookModal({ book, onClose, onSave, userId }) {
             bottom: 14,
             right: 18,
             color: "#3d3426",
-            fontSize: 13,
+            fontSize: 12,
           }}
         >
           ✦
@@ -317,27 +316,27 @@ function BookModal({ book, onClose, onSave, userId }) {
         <div
           style={{
             color: "#554d40",
-            fontSize: 11,
+            fontSize: 10,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            marginBottom: 10,
+            marginBottom: 8,
           }}
         >
           {book?.id ? "Редагування" : "Nova Inscriptio"}
         </div>
         <h2
           style={{
-            fontSize: 32,
+            fontSize: "clamp(22px, 4vw, 30px)",
             fontWeight: "normal",
             color: "#e8dfc8",
-            marginBottom: 32,
+            marginBottom: 24,
           }}
         >
           {book?.id ? "Редагувати " : "Додати до "}
           <em style={{ color: "#c8a96a" }}>колекції</em>
         </h2>
 
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <label style={labelStyle}>Назва книги</label>
           <input
             style={inputStyle}
@@ -346,8 +345,7 @@ function BookModal({ book, onClose, onSave, userId }) {
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
         </div>
-
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <label style={labelStyle}>Автор</label>
           <input
             style={inputStyle}
@@ -356,8 +354,7 @@ function BookModal({ book, onClose, onSave, userId }) {
             onChange={(e) => setForm({ ...form, author: e.target.value })}
           />
         </div>
-
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <label style={labelStyle}>Жанр</label>
           <select
             style={inputStyle}
@@ -371,9 +368,9 @@ function BookModal({ book, onClose, onSave, userId }) {
           </select>
         </div>
 
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <label style={labelStyle}>Обкладинка</label>
-          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
             {[
               ["auto", "🔍 Автоматично"],
               ["upload", "📁 Своя картинка"],
@@ -383,7 +380,7 @@ function BookModal({ book, onClose, onSave, userId }) {
                 onClick={() => setCoverMode(mode)}
                 style={{
                   flex: 1,
-                  padding: "10px",
+                  padding: "10px 6px",
                   border: `1px solid ${
                     coverMode === mode ? "#c8a96a" : "#2e271c"
                   }`,
@@ -401,31 +398,28 @@ function BookModal({ book, onClose, onSave, userId }) {
               </div>
             ))}
           </div>
-
           {coverMode === "auto" && (
             <div
               style={{
                 background: "#120f0a",
                 border: "1px solid #2e271c",
-                padding: "14px 16px",
+                padding: "12px 14px",
                 color: "#554d40",
                 fontStyle: "italic",
-                fontSize: 14,
+                fontSize: 13,
                 fontFamily: "Georgia, serif",
               }}
             >
-              Обкладинка підтягнеться автоматично після збереження за назвою і
-              автором
+              Обкладинка підтягнеться автоматично за назвою і автором
             </div>
           )}
-
           {coverMode === "upload" && (
             <div>
               {preview && (
                 <div
                   style={{
-                    marginBottom: 12,
-                    height: 160,
+                    marginBottom: 10,
+                    height: 140,
                     background: "#120f0a",
                     border: "1px solid #2e271c",
                     overflow: "hidden",
@@ -450,12 +444,12 @@ function BookModal({ book, onClose, onSave, userId }) {
                   display: "block",
                   background: "#120f0a",
                   border: "1px dashed #3d3426",
-                  padding: "16px",
+                  padding: "14px",
                   textAlign: "center",
                   cursor: "pointer",
                   color: uploading ? "#554d40" : "#c8a96a",
                   fontFamily: "Georgia, serif",
-                  fontSize: 14,
+                  fontSize: 13,
                   letterSpacing: "0.08em",
                 }}
               >
@@ -476,7 +470,7 @@ function BookModal({ book, onClose, onSave, userId }) {
           )}
         </div>
 
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <label style={labelStyle}>Статус</label>
           <div style={{ display: "flex", gap: 8 }}>
             {Object.entries(STATUS_LABELS).map(([key, label]) => (
@@ -485,7 +479,7 @@ function BookModal({ book, onClose, onSave, userId }) {
                 onClick={() => setForm({ ...form, status: key })}
                 style={{
                   flex: 1,
-                  padding: "12px 8px",
+                  padding: "10px 4px",
                   border: `1px solid ${
                     form.status === key ? STATUS_COLORS[key] : "#2e271c"
                   }`,
@@ -493,7 +487,7 @@ function BookModal({ book, onClose, onSave, userId }) {
                   background:
                     form.status === key ? `${STATUS_COLORS[key]}15` : "#120f0a",
                   cursor: "pointer",
-                  fontSize: 14,
+                  fontSize: 12,
                   fontFamily: "Georgia, serif",
                   textAlign: "center",
                   transition: "all 0.15s",
@@ -505,7 +499,7 @@ function BookModal({ book, onClose, onSave, userId }) {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 32 }}>
+        <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
           <button
             onClick={onClose}
             style={{
@@ -514,8 +508,8 @@ function BookModal({ book, onClose, onSave, userId }) {
               border: "1px solid #2e271c",
               color: "#7a6f60",
               fontFamily: "Georgia, serif",
-              fontSize: 15,
-              padding: "13px",
+              fontSize: 14,
+              padding: "12px",
               cursor: "pointer",
             }}
           >
@@ -530,9 +524,9 @@ function BookModal({ book, onClose, onSave, userId }) {
               border: "1px solid #3d3426",
               color: "#c8a96a",
               fontFamily: "Georgia, serif",
-              fontSize: 15,
+              fontSize: 14,
               letterSpacing: "0.1em",
-              padding: "13px",
+              padding: "12px",
               cursor: "pointer",
             }}
           >
@@ -561,7 +555,7 @@ function DeleteModal({ book, onClose, onConfirm }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
+        padding: 16,
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
@@ -569,9 +563,9 @@ function DeleteModal({ book, onClose, onConfirm }) {
         style={{
           background: "#1d1812",
           border: "1px solid #3d3426",
-          padding: "48px",
-          width: 440,
-          maxWidth: "100%",
+          padding: "clamp(24px, 4vw, 44px)",
+          width: "100%",
+          maxWidth: 420,
           textAlign: "center",
           position: "relative",
         }}
@@ -579,10 +573,10 @@ function DeleteModal({ book, onClose, onConfirm }) {
         <span
           style={{
             position: "absolute",
-            top: 14,
-            left: 18,
+            top: 12,
+            left: 16,
             color: "#3d3426",
-            fontSize: 13,
+            fontSize: 12,
           }}
         >
           ✦
@@ -590,23 +584,23 @@ function DeleteModal({ book, onClose, onConfirm }) {
         <span
           style={{
             position: "absolute",
-            bottom: 14,
-            right: 18,
+            bottom: 12,
+            right: 16,
             color: "#3d3426",
-            fontSize: 13,
+            fontSize: 12,
           }}
         >
           ✦
         </span>
-        <div style={{ fontSize: 36, color: "#c46060", marginBottom: 20 }}>
+        <div style={{ fontSize: 32, color: "#c46060", marginBottom: 16 }}>
           ✕
         </div>
         <h2
           style={{
-            fontSize: 26,
+            fontSize: "clamp(18px, 4vw, 24px)",
             fontWeight: "normal",
             color: "#e8dfc8",
-            marginBottom: 12,
+            marginBottom: 10,
           }}
         >
           Видалити книгу?
@@ -615,8 +609,8 @@ function DeleteModal({ book, onClose, onConfirm }) {
           style={{
             color: "#7a6f60",
             fontStyle: "italic",
-            fontSize: 16,
-            marginBottom: 32,
+            fontSize: 15,
+            marginBottom: 28,
           }}
         >
           «{book.title}» буде видалено назавжди
@@ -630,8 +624,8 @@ function DeleteModal({ book, onClose, onConfirm }) {
               border: "1px solid #2e271c",
               color: "#7a6f60",
               fontFamily: "Georgia, serif",
-              fontSize: 15,
-              padding: "13px",
+              fontSize: 14,
+              padding: "12px",
               cursor: "pointer",
             }}
           >
@@ -650,8 +644,8 @@ function DeleteModal({ book, onClose, onConfirm }) {
               border: "1px solid #c46060",
               color: "#c46060",
               fontFamily: "Georgia, serif",
-              fontSize: 15,
-              padding: "13px",
+              fontSize: 14,
+              padding: "12px",
               cursor: "pointer",
             }}
           >
@@ -739,21 +733,29 @@ export default function Library({ session, onLogout, navigate }) {
     <>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { margin: 0; background: #0e0c09; }
+        body { margin: 0; background: #0e0c09; overflow-x: hidden; }
         #root { width: 100%; }
         .layout { display: flex; min-height: 100vh; width: 100%; }
-        .sidebar { width: 300px; flex-shrink: 0; background: #120f0a; border-right: 1px solid #2e271c; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-        .lib-main { flex: 1; padding: 52px 64px; min-width: 0; overflow-x: hidden; }
-        .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: #2e271c; border: 1px solid #2e271c; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2e271c; border: 1px solid #2e271c; margin-bottom: 36px; }
-        .filters-row { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; align-items: center; }
+        .sidebar { width: 280px; flex-shrink: 0; background: #120f0a; border-right: 1px solid #2e271c; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .lib-main { flex: 1; padding: 48px 56px; min-width: 0; overflow-x: hidden; }
+        .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1px; background: #2e271c; border: 1px solid #2e271c; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2e271c; border: 1px solid #2e271c; margin-bottom: 32px; }
+        .filters-row { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; align-items: center; }
+        .desktop-add-btn { display: inline-block; }
         .mobile-header { display: none; }
+
         @media (max-width: 900px) {
-          .sidebar { display: none; }
-          .sidebar.open { display: flex; position: fixed; inset: 0; z-index: 200; width: 300px; }
-          .lib-main { padding: 24px 20px; }
-          .books-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-          .mobile-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: #120f0a; border-bottom: 1px solid #2e271c; position: sticky; top: 0; z-index: 100; }
+          .sidebar { display: none !important; }
+          .sidebar.open { display: flex !important; position: fixed; top: 0; left: 0; bottom: 0; width: 280px; height: 100vh; z-index: 500; }
+          .layout { display: block !important; }
+          .lib-main { padding: 20px 16px; width: 100%; }
+          .books-grid { grid-template-columns: repeat(2, 1fr); }
+          .desktop-add-btn { display: none !important; }
+          .mobile-header { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: #120f0a; border-bottom: 1px solid #2e271c; position: sticky; top: 0; z-index: 100; width: 100%; }
+        }
+
+        @media (max-width: 380px) {
+          .books-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -765,11 +767,12 @@ export default function Library({ session, onLogout, navigate }) {
           color: "#e8dfc8",
         }}
       >
+        {/* MOBILE HEADER */}
         <div className="mobile-header">
-          <div style={{ color: "#c8a96a", fontSize: 22, fontStyle: "italic" }}>
-            Полиця
+          <div style={{ color: "#c8a96a", fontSize: 20, fontStyle: "italic" }}>
+            ❧ Полиця
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 8 }}>
             <button
               onClick={() => setModal({ type: "add" })}
               style={{
@@ -777,8 +780,8 @@ export default function Library({ session, onLogout, navigate }) {
                 border: "1px solid #3d3426",
                 color: "#c8a96a",
                 fontFamily: "Georgia, serif",
-                fontSize: 14,
-                padding: "9px 16px",
+                fontSize: 13,
+                padding: "8px 14px",
                 cursor: "pointer",
               }}
             >
@@ -791,8 +794,8 @@ export default function Library({ session, onLogout, navigate }) {
                 border: "1px solid #2e271c",
                 color: "#7a6f60",
                 fontFamily: "Georgia, serif",
-                fontSize: 20,
-                padding: "7px 13px",
+                fontSize: 18,
+                padding: "6px 12px",
                 cursor: "pointer",
               }}
             >
@@ -801,13 +804,14 @@ export default function Library({ session, onLogout, navigate }) {
           </div>
         </div>
 
+        {/* SIDEBAR */}
         <aside className={`sidebar${showMobileMenu ? " open" : ""}`}>
           {showMobileMenu && (
             <div
               style={{
                 position: "fixed",
                 inset: 0,
-                background: "rgba(0,0,0,0.6)",
+                background: "rgba(0,0,0,0.7)",
                 zIndex: -1,
               }}
               onClick={() => setShowMobileMenu(false)}
@@ -815,7 +819,7 @@ export default function Library({ session, onLogout, navigate }) {
           )}
           <div
             style={{
-              padding: "36px 28px 26px",
+              padding: "32px 24px 22px",
               borderBottom: "1px solid #2e271c",
               textAlign: "center",
               position: "relative",
@@ -826,12 +830,12 @@ export default function Library({ session, onLogout, navigate }) {
                 onClick={() => setShowMobileMenu(false)}
                 style={{
                   position: "absolute",
-                  top: 16,
-                  right: 16,
+                  top: 14,
+                  right: 14,
                   background: "transparent",
                   border: "none",
                   color: "#554d40",
-                  fontSize: 22,
+                  fontSize: 20,
                   cursor: "pointer",
                 }}
               >
@@ -841,38 +845,39 @@ export default function Library({ session, onLogout, navigate }) {
             <div
               style={{
                 color: "#554d40",
-                fontSize: 11,
+                fontSize: 10,
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                marginBottom: 12,
+                marginBottom: 10,
               }}
             >
               Bibliotheca Privata
             </div>
             <div
-              style={{ color: "#c8a96a", fontSize: 30, fontWeight: "normal" }}
+              style={{ color: "#c8a96a", fontSize: 26, fontWeight: "normal" }}
             >
               <em>Полиця</em>
             </div>
             <div
               style={{
                 color: "#3d3426",
-                marginTop: 12,
-                letterSpacing: 6,
-                fontSize: 18,
+                marginTop: 10,
+                letterSpacing: 5,
+                fontSize: 16,
               }}
             >
               ❧ ✦ ❧
             </div>
           </div>
-          <nav style={{ padding: "24px 0", flex: 1 }}>
+
+          <nav style={{ padding: "20px 0", flex: 1 }}>
             <div
               style={{
                 color: "#554d40",
-                fontSize: 11,
+                fontSize: 10,
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                padding: "14px 28px 8px",
+                padding: "12px 24px 6px",
               }}
             >
               Collectio
@@ -888,9 +893,9 @@ export default function Library({ session, onLogout, navigate }) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "13px 28px",
+                  padding: "12px 24px",
                   cursor: "pointer",
-                  fontSize: 16,
+                  fontSize: 15,
                   color: filter === item.key ? "#c8a96a" : "#7a6f60",
                   borderLeft:
                     filter === item.key
@@ -906,7 +911,7 @@ export default function Library({ session, onLogout, navigate }) {
                 <span>{item.label}</span>
                 <span
                   style={{
-                    fontSize: 14,
+                    fontSize: 13,
                     fontStyle: "italic",
                     color: filter === item.key ? "#c8a96a" : "#554d40",
                   }}
@@ -916,12 +921,13 @@ export default function Library({ session, onLogout, navigate }) {
               </div>
             ))}
           </nav>
-          <div style={{ padding: "22px 28px", borderTop: "1px solid #2e271c" }}>
+
+          <div style={{ padding: "20px 24px", borderTop: "1px solid #2e271c" }}>
             <div
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 color: "#c9b99a",
-                marginBottom: 6,
+                marginBottom: 4,
                 wordBreak: "break-all",
               }}
             >
@@ -929,10 +935,10 @@ export default function Library({ session, onLogout, navigate }) {
             </div>
             <div
               style={{
-                fontSize: 13,
+                fontSize: 12,
                 color: "#554d40",
                 fontStyle: "italic",
-                marginBottom: 18,
+                marginBottom: 16,
               }}
             >
               {books.length} томів у колекції
@@ -945,8 +951,8 @@ export default function Library({ session, onLogout, navigate }) {
                 border: "1px solid #2e271c",
                 color: "#554d40",
                 fontFamily: "Georgia, serif",
-                fontSize: 13,
-                padding: "10px",
+                fontSize: 12,
+                padding: "9px",
                 cursor: "pointer",
                 letterSpacing: "0.08em",
                 marginBottom: 8,
@@ -962,8 +968,8 @@ export default function Library({ session, onLogout, navigate }) {
                 border: "1px solid #2e271c",
                 color: "#554d40",
                 fontFamily: "Georgia, serif",
-                fontSize: 13,
-                padding: "10px",
+                fontSize: 12,
+                padding: "9px",
                 cursor: "pointer",
                 letterSpacing: "0.08em",
               }}
@@ -973,33 +979,34 @@ export default function Library({ session, onLogout, navigate }) {
           </div>
         </aside>
 
+        {/* MAIN */}
         <main className="lib-main">
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "flex-start",
-              marginBottom: 10,
+              marginBottom: 8,
             }}
           >
             <div>
               <div
                 style={{
                   color: "#554d40",
-                  fontSize: 12,
+                  fontSize: 11,
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
-                  marginBottom: 12,
+                  marginBottom: 10,
                 }}
               >
                 ✦ Mea Bibliotheca ✦
               </div>
               <h1
                 style={{
-                  fontSize: 52,
+                  fontSize: "clamp(28px, 5vw, 48px)",
                   fontWeight: "normal",
                   color: "#e8dfc8",
-                  marginBottom: 8,
+                  marginBottom: 6,
                   lineHeight: 1.1,
                 }}
               >
@@ -1009,26 +1016,27 @@ export default function Library({ session, onLogout, navigate }) {
                 style={{
                   color: "#7a6f60",
                   fontStyle: "italic",
-                  fontSize: 16,
-                  marginBottom: 36,
+                  fontSize: 15,
+                  marginBottom: 28,
                 }}
               >
                 {books.length} томів · anno MMXXVI
               </p>
             </div>
             <button
+              className="desktop-add-btn"
               onClick={() => setModal({ type: "add" })}
               style={{
                 background: "rgba(200,169,106,0.1)",
                 border: "1px solid #3d3426",
                 color: "#c8a96a",
                 fontFamily: "Georgia, serif",
-                fontSize: 15,
+                fontSize: 14,
                 letterSpacing: "0.1em",
-                padding: "13px 28px",
+                padding: "12px 24px",
                 cursor: "pointer",
                 flexShrink: 0,
-                marginTop: 36,
+                marginTop: 28,
               }}
             >
               + Додати книгу
@@ -1040,10 +1048,11 @@ export default function Library({ session, onLogout, navigate }) {
               height: 1,
               background:
                 "linear-gradient(90deg,transparent,#3d3426,transparent)",
-              margin: "0 0 36px",
+              margin: "0 0 28px",
             }}
           />
 
+          {/* STATS */}
           <div className="stats-grid">
             {[
               { label: "бажанки", count: counts.want, color: "#c8a96a" },
@@ -1056,21 +1065,21 @@ export default function Library({ session, onLogout, navigate }) {
             ].map((st) => (
               <div
                 key={st.label}
-                style={{ background: "#1d1812", padding: "26px 28px" }}
+                style={{ background: "#1d1812", padding: "20px 16px" }}
               >
                 <div
                   style={{
-                    fontSize: 44,
+                    fontSize: "clamp(28px, 4vw, 40px)",
                     color: st.color,
                     lineHeight: 1,
-                    marginBottom: 8,
+                    marginBottom: 6,
                   }}
                 >
                   {st.count}
                 </div>
                 <div
                   style={{
-                    fontSize: 15,
+                    fontSize: 13,
                     color: "#7a6f60",
                     fontStyle: "italic",
                   }}
@@ -1081,20 +1090,21 @@ export default function Library({ session, onLogout, navigate }) {
             ))}
           </div>
 
+          {/* FILTERS */}
           <div className="filters-row">
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 8,
                 background: "#1d1812",
                 border: "1px solid #2e271c",
-                padding: "11px 18px",
+                padding: "10px 14px",
                 flex: 1,
-                maxWidth: 320,
+                maxWidth: 280,
               }}
             >
-              <span style={{ color: "#554d40", fontSize: 18 }}>⌕</span>
+              <span style={{ color: "#554d40", fontSize: 16 }}>⌕</span>
               <input
                 style={{
                   background: "none",
@@ -1103,7 +1113,7 @@ export default function Library({ session, onLogout, navigate }) {
                   color: "#e8dfc8",
                   fontFamily: "Georgia, serif",
                   fontStyle: "italic",
-                  fontSize: 16,
+                  fontSize: 15,
                   width: "100%",
                 }}
                 placeholder="Пошук..."
@@ -1121,15 +1131,15 @@ export default function Library({ session, onLogout, navigate }) {
                 key={key}
                 onClick={() => setFilter(key)}
                 style={{
-                  padding: "11px 20px",
+                  padding: "10px 14px",
                   border: `1px solid ${filter === key ? "#c8a96a" : "#2e271c"}`,
                   color: filter === key ? "#c8a96a" : "#7a6f60",
                   background:
                     filter === key ? "rgba(200,169,106,0.08)" : "#1d1812",
                   cursor: "pointer",
-                  fontSize: 14,
+                  fontSize: 13,
                   fontFamily: "Georgia, serif",
-                  letterSpacing: "0.08em",
+                  letterSpacing: "0.06em",
                   transition: "all 0.15s",
                 }}
               >
@@ -1138,14 +1148,15 @@ export default function Library({ session, onLogout, navigate }) {
             ))}
           </div>
 
+          {/* GRID */}
           {filtered.length === 0 ? (
             <div
               style={{
                 textAlign: "center",
-                padding: "100px 0",
+                padding: "80px 0",
                 color: "#554d40",
                 fontStyle: "italic",
-                fontSize: 20,
+                fontSize: 18,
               }}
             >
               {books.length === 0
