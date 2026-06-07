@@ -8,10 +8,21 @@ export default function Home({ session, navigate, onLogout }) {
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      const { data } = await supabase
+      const { data: profilesData } = await supabase
         .from("profiles")
-        .select("*, books(count)");
-      if (data) setProfiles(data);
+        .select("*");
+      if (profilesData) {
+        const withCounts = await Promise.all(
+          profilesData.map(async (p) => {
+            const { count } = await supabase
+              .from("books")
+              .select("*", { count: "exact", head: true })
+              .eq("user_id", p.id);
+            return { ...p, bookCount: count || 0 };
+          })
+        );
+        setProfiles(withCounts);
+      }
       setLoading(false);
     };
     fetchProfiles();
@@ -328,7 +339,7 @@ export default function Home({ session, navigate, onLogout }) {
                   @{profile.username}
                 </div>
                 <div style={{ fontSize: 13, color: "#7a6f60" }}>
-                  {profile.books?.[0]?.count || 0} книг у колекції
+                  {profile.bookCount || 0} книг у колекції
                 </div>
               </div>
             ))}
