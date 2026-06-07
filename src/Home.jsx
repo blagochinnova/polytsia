@@ -54,8 +54,26 @@ export default function Home({ session, navigate, onLogout }) {
           background: "#120f0a",
         }}
       >
-        <div style={{ color: "#c8a96a", fontSize: 22, fontStyle: "italic" }}>
-          ❧ Полиця
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ color: "#c8a96a", fontSize: 22, fontStyle: "italic" }}>
+            ❧ Полиця
+          </div>
+          <div
+            style={{ color: "#3d3426", fontSize: 13, letterSpacing: "0.05em" }}
+          >
+            |
+          </div>
+          <div
+            style={{
+              color: "#554d40",
+              fontSize: 12,
+              letterSpacing: "0.18em",
+              fontFamily: "Georgia, serif",
+              fontStyle: "italic",
+            }}
+          >
+            curated by <span style={{ color: "#c8a96a" }}>NyxDi</span>
+          </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {session ? (
