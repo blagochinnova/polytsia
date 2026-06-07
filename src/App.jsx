@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import Auth from "./Auth";
 import Library from "./Library";
+import Settings from "./Settings";
 import Home from "./Home";
 import PublicProfile from "./PublicProfile";
 
@@ -28,6 +29,8 @@ function App() {
         setPage("library");
       } else if (hash === "#/auth") {
         setPage("auth");
+      } else if (hash === "#/settings") {
+        setPage("settings");
       } else {
         setPage("home");
       }
@@ -55,6 +58,15 @@ function App() {
     }
     return (
       <Library session={session} onLogout={handleLogout} navigate={navigate} />
+    );
+  }
+  if (page === "settings") {
+    if (!session) {
+      navigate("#/auth");
+      return null;
+    }
+    return (
+      <Settings session={session} navigate={navigate} onLogout={handleLogout} />
     );
   }
   if (page === "profile")

@@ -944,6 +944,23 @@ export default function Library({ session, onLogout, navigate }) {
               {books.length} томів у колекції
             </div>
             <button
+              onClick={() => navigate("#/settings")}
+              style={{
+                width: "100%",
+                background: "transparent",
+                border: "1px solid #2e271c",
+                color: "#554d40",
+                fontFamily: "Georgia, serif",
+                fontSize: 12,
+                padding: "9px",
+                cursor: "pointer",
+                letterSpacing: "0.08em",
+                marginBottom: 8,
+              }}
+            >
+              ⚙ Налаштування
+            </button>
+            <button
               onClick={() => navigate("")}
               style={{
                 width: "100%",
