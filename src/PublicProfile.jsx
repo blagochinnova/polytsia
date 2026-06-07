@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
-const STATUS_LABELS = {
-  want: "✧ Бажанка",
-  library: "📚 Бібліотека",
-  done: "✓ Прочитано",
-};
-const STATUS_COLORS = { want: "#c8a96a", library: "#8eac8b", done: "#9b8fb4" };
+const TAGS = [
+  { key: "want", label: "✧ Бажанка", color: "#c8a96a" },
+  { key: "library", label: "📚 Бібліотека", color: "#8eac8b" },
+  { key: "done", label: "✓ Прочитано", color: "#9b8fb4" },
+];
+
 const COVERS = [
   { bg: "linear-gradient(160deg,#1c1408,#2b1f10)", emoji: "🕯️" },
   { bg: "linear-gradient(160deg,#0e1710,#162415)", emoji: "🌿" },
@@ -18,6 +18,12 @@ const COVERS = [
   { bg: "linear-gradient(160deg,#0d1510,#14211a)", emoji: "⚗️" },
 ];
 const getCover = (id) => COVERS[(id?.charCodeAt(0) || 0) % COVERS.length];
+
+const parseTags = (tags) => {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags;
+  return tags.split(",").filter(Boolean);
+};
 
 const fetchCover = async (title, author) => {
   const q = encodeURIComponent(`${title} ${author || ""}`.trim());
@@ -36,11 +42,18 @@ const fetchCover = async (title, author) => {
 };
 
 function BookCard({ book }) {
-  const [coverUrl, setCoverUrl] = useState(null);
+  const [coverUrl, setCoverUrl] = useState(book.cover_url || null);
   const fallback = getCover(book.id);
+  const bookTags = parseTags(book.tags);
+
   useEffect(() => {
-    fetchCover(book.title, book.author).then(setCoverUrl);
-  }, [book.title, book.author]);
+    if (!book.cover_url) {
+      fetchCover(book.title, book.author).then((url) => {
+        if (url) setCoverUrl(url);
+      });
+    }
+  }, [book.title, book.author, book.cover_url]);
+
   return (
     <div style={{ background: "#1d1812" }}>
       <div
@@ -68,19 +81,34 @@ function BookCard({ book }) {
         <div
           style={{
             position: "absolute",
-            bottom: 10,
-            right: 10,
-            fontSize: 9,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            padding: "4px 10px",
-            border: `1px solid ${STATUS_COLORS[book.status]}60`,
-            color: STATUS_COLORS[book.status],
-            background: `${STATUS_COLORS[book.status]}20`,
-            fontFamily: "Georgia, serif",
+            top: 10,
+            left: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
           }}
         >
-          {STATUS_LABELS[book.status]}
+          {bookTags.map((tag) => {
+            const t = TAGS.find((x) => x.key === tag);
+            if (!t) return null;
+            return (
+              <div
+                key={tag}
+                style={{
+                  fontSize: 9,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  padding: "3px 8px",
+                  border: `1px solid ${t.color}60`,
+                  color: t.color,
+                  background: `${t.color}20`,
+                  fontFamily: "Georgia, serif",
+                }}
+              >
+                {t.label}
+              </div>
+            );
+          })}
         </div>
       </div>
       <div style={{ padding: "14px 16px 18px" }}>
@@ -101,10 +129,37 @@ function BookCard({ book }) {
             color: "#7a6f60",
             fontStyle: "italic",
             fontFamily: "Georgia, serif",
+            marginBottom: 4,
           }}
         >
           {book.author || "—"}
         </div>
+        {book.genre && (
+          <div
+            style={{
+              fontSize: 11,
+              color: "#554d40",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            {book.genre}
+          </div>
+        )}
+        {book.publisher && (
+          <div
+            style={{
+              fontSize: 11,
+              color: "#3d3426",
+              fontStyle: "italic",
+              marginTop: 3,
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            {book.publisher}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -144,10 +199,16 @@ export default function PublicProfile({ username, session, navigate }) {
 
   const counts = { want: 0, library: 0, done: 0 };
   books.forEach((b) => {
-    if (counts[b.status] !== undefined) counts[b.status]++;
+    parseTags(b.tags).forEach((tag) => {
+      if (counts[tag] !== undefined) counts[tag]++;
+    });
   });
+
   const filtered =
-    filter === "all" ? books : books.filter((b) => b.status === filter);
+    filter === "all"
+      ? books
+      : books.filter((b) => parseTags(b.tags).includes(filter));
+
   const isOwn = session?.user?.id === profile?.id;
 
   if (loading)
@@ -207,15 +268,17 @@ export default function PublicProfile({ username, session, navigate }) {
     >
       <style>{`
         @media (max-width: 768px) {
-          .pub-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
+          .pub-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .pub-hero { padding: 32px 20px !important; }
           .pub-main { padding: 24px 20px !important; }
           .pub-stats { grid-template-columns: repeat(3,1fr) !important; }
+          .pub-header { padding: 0 20px !important; }
         }
       `}</style>
 
       {/* HEADER */}
       <header
+        className="pub-header"
         style={{
           borderBottom: "1px solid #2e271c",
           padding: "0 56px",

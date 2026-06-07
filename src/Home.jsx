@@ -37,13 +37,19 @@ export default function Home({ session, navigate, onLogout }) {
         .profile-card { transition: all 0.18s; }
         @media (max-width: 768px) {
           .home-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
-          .home-hero { padding: 48px 24px 32px !important; }
+          .home-hero { padding: 40px 20px 28px !important; }
           .home-main { padding: 24px 20px !important; }
+          .home-header { padding: 0 20px !important; }
+          .home-hero h1 { font-size: 36px !important; }
+          .home-hero p { font-size: 15px !important; }
+          .nyxdi-label { display: none !important; }
+          .header-btns button { font-size: 12px !important; padding: 7px 12px !important; }
         }
       `}</style>
 
       {/* HEADER */}
       <header
+        className="home-header"
         style={{
           borderBottom: "1px solid #2e271c",
           padding: "0 56px",
@@ -59,23 +65,27 @@ export default function Home({ session, navigate, onLogout }) {
             ❧ Полиця
           </div>
           <div
-            style={{ color: "#3d3426", fontSize: 13, letterSpacing: "0.05em" }}
+            className="nyxdi-label"
+            style={{ display: "flex", alignItems: "center", gap: 12 }}
           >
-            |
-          </div>
-          <div
-            style={{
-              color: "#554d40",
-              fontSize: 12,
-              letterSpacing: "0.18em",
-              fontFamily: "Georgia, serif",
-              fontStyle: "italic",
-            }}
-          >
-            curated by <span style={{ color: "#c8a96a" }}>NyxDi</span>
+            <div style={{ color: "#3d3426", fontSize: 13 }}>|</div>
+            <div
+              style={{
+                color: "#554d40",
+                fontSize: 12,
+                letterSpacing: "0.18em",
+                fontFamily: "Georgia, serif",
+                fontStyle: "italic",
+              }}
+            >
+              curated by <span style={{ color: "#c8a96a" }}>NyxDi</span>
+            </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <div
+          className="header-btns"
+          style={{ display: "flex", gap: 10, alignItems: "center" }}
+        >
           {session ? (
             <>
               <button
@@ -108,22 +118,20 @@ export default function Home({ session, navigate, onLogout }) {
               </button>
             </>
           ) : (
-            <>
-              <button
-                onClick={() => navigate("#/auth")}
-                style={{
-                  background: "rgba(200,169,106,0.1)",
-                  border: "1px solid #3d3426",
-                  color: "#c8a96a",
-                  fontFamily: "Georgia, serif",
-                  fontSize: 13,
-                  padding: "8px 18px",
-                  cursor: "pointer",
-                }}
-              >
-                Увійти
-              </button>
-            </>
+            <button
+              onClick={() => navigate("#/auth")}
+              style={{
+                background: "rgba(200,169,106,0.1)",
+                border: "1px solid #3d3426",
+                color: "#c8a96a",
+                fontFamily: "Georgia, serif",
+                fontSize: 13,
+                padding: "8px 18px",
+                cursor: "pointer",
+              }}
+            >
+              Увійти
+            </button>
           )}
         </div>
       </header>
@@ -165,7 +173,6 @@ export default function Home({ session, navigate, onLogout }) {
             color: "#7a6f60",
             fontStyle: "italic",
             fontSize: 17,
-            marginBottom: 40,
             maxWidth: 500,
             margin: "0 auto 40px",
           }}

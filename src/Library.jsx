@@ -15,12 +15,13 @@ const GENRES = [
   "Даркакадемія",
   "Інше",
 ];
-const STATUS_LABELS = {
-  want: "✧ Бажанка",
-  library: "📚 Бібліотека",
-  done: "✓ Прочитано",
-};
-const STATUS_COLORS = { want: "#c8a96a", library: "#8eac8b", done: "#9b8fb4" };
+
+const TAGS = [
+  { key: "want", label: "✧ Бажанка", color: "#c8a96a" },
+  { key: "library", label: "📚 Бібліотека", color: "#8eac8b" },
+  { key: "done", label: "✓ Прочитано", color: "#9b8fb4" },
+];
+
 const COVERS = [
   { bg: "linear-gradient(160deg,#1c1408,#2b1f10)", emoji: "🕯️" },
   { bg: "linear-gradient(160deg,#0e1710,#162415)", emoji: "🌿" },
@@ -49,6 +50,12 @@ const fetchCover = async (title, author) => {
   }
 };
 
+const parseTags = (tags) => {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags;
+  return tags.split(",").filter(Boolean);
+};
+
 const inputStyle = {
   width: "100%",
   background: "#120f0a",
@@ -74,6 +81,7 @@ const labelStyle = {
 function BookCard({ book, onEdit, onDelete }) {
   const [coverUrl, setCoverUrl] = useState(book.cover_url || null);
   const fallback = getCover(book.id);
+  const bookTags = parseTags(book.tags);
 
   useEffect(() => {
     if (!book.cover_url) {
@@ -118,17 +126,32 @@ function BookCard({ book, onEdit, onDelete }) {
             position: "absolute",
             top: 10,
             left: 10,
-            fontSize: 10,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            padding: "4px 10px",
-            border: `1px solid ${STATUS_COLORS[book.status]}60`,
-            color: STATUS_COLORS[book.status],
-            background: `${STATUS_COLORS[book.status]}25`,
-            fontFamily: "Georgia, serif",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
           }}
         >
-          {STATUS_LABELS[book.status]}
+          {bookTags.map((tag) => {
+            const t = TAGS.find((x) => x.key === tag);
+            if (!t) return null;
+            return (
+              <div
+                key={tag}
+                style={{
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  padding: "3px 8px",
+                  border: `1px solid ${t.color}60`,
+                  color: t.color,
+                  background: `${t.color}25`,
+                  fontFamily: "Georgia, serif",
+                }}
+              >
+                {t.label}
+              </div>
+            );
+          })}
         </div>
       </div>
       <div style={{ padding: "14px 16px 12px", flex: 1 }}>
@@ -165,6 +188,19 @@ function BookCard({ book, onEdit, onDelete }) {
         >
           {book.genre || ""}
         </div>
+        {book.publisher && (
+          <div
+            style={{
+              fontSize: 11,
+              color: "#3d3426",
+              fontStyle: "italic",
+              marginTop: 4,
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            {book.publisher}
+          </div>
+        )}
       </div>
       <div style={{ display: "flex", borderTop: "1px solid #2e271c" }}>
         <button
@@ -224,10 +260,18 @@ function BookModal({ book, onClose, onSave, userId }) {
           title: book.title,
           author: book.author || "",
           genre: book.genre || "",
-          status: book.status,
+          publisher: book.publisher || "",
           cover_url: book.cover_url || null,
+          tags: parseTags(book.tags),
         }
-      : { title: "", author: "", genre: "", status: "want", cover_url: null }
+      : {
+          title: "",
+          author: "",
+          genre: "",
+          publisher: "",
+          cover_url: null,
+          tags: [],
+        }
   );
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -235,6 +279,13 @@ function BookModal({ book, onClose, onSave, userId }) {
     book?.cover_url ? "upload" : "auto"
   );
   const [preview, setPreview] = useState(book?.cover_url || null);
+
+  const toggleTag = (key) => {
+    const newTags = form.tags.includes(key)
+      ? form.tags.filter((t) => t !== key)
+      : [...form.tags, key];
+    setForm({ ...form, tags: newTags });
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -282,7 +333,7 @@ function BookModal({ book, onClose, onSave, userId }) {
         style={{
           background: "#1d1812",
           border: "1px solid #3d3426",
-          padding: "clamp(24px, 4vw, 48px)",
+          padding: "clamp(24px, 4vw, 40px)",
           width: "100%",
           maxWidth: 540,
           position: "relative",
@@ -366,6 +417,15 @@ function BookModal({ book, onClose, onSave, userId }) {
               <option key={g}>{g}</option>
             ))}
           </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={labelStyle}>Видавництво</label>
+          <input
+            style={inputStyle}
+            placeholder="Наприклад: Vivat, Рідна мова..."
+            value={form.publisher}
+            onChange={(e) => setForm({ ...form, publisher: e.target.value })}
+          />
         </div>
 
         <div style={{ marginBottom: 16 }}>
@@ -471,32 +531,47 @@ function BookModal({ book, onClose, onSave, userId }) {
         </div>
 
         <div style={{ marginBottom: 16 }}>
-          <label style={labelStyle}>Статус</label>
-          <div style={{ display: "flex", gap: 8 }}>
-            {Object.entries(STATUS_LABELS).map(([key, label]) => (
-              <div
-                key={key}
-                onClick={() => setForm({ ...form, status: key })}
-                style={{
-                  flex: 1,
-                  padding: "10px 4px",
-                  border: `1px solid ${
-                    form.status === key ? STATUS_COLORS[key] : "#2e271c"
-                  }`,
-                  color: form.status === key ? STATUS_COLORS[key] : "#7a6f60",
-                  background:
-                    form.status === key ? `${STATUS_COLORS[key]}15` : "#120f0a",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontFamily: "Georgia, serif",
-                  textAlign: "center",
-                  transition: "all 0.15s",
-                }}
-              >
-                {label}
-              </div>
-            ))}
+          <label style={labelStyle}>Мітки (можна обрати декілька)</label>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {TAGS.map(({ key, label, color }) => {
+              const active = form.tags.includes(key);
+              return (
+                <div
+                  key={key}
+                  onClick={() => toggleTag(key)}
+                  style={{
+                    flex: 1,
+                    minWidth: 120,
+                    padding: "10px 8px",
+                    border: `1px solid ${active ? color : "#2e271c"}`,
+                    color: active ? color : "#7a6f60",
+                    background: active ? `${color}15` : "#120f0a",
+                    cursor: "pointer",
+                    fontSize: 13,
+                    fontFamily: "Georgia, serif",
+                    textAlign: "center",
+                    transition: "all 0.15s",
+                    userSelect: "none",
+                  }}
+                >
+                  {active ? "✓ " : ""}
+                  {label}
+                </div>
+              );
+            })}
           </div>
+          {form.tags.length === 0 && (
+            <div
+              style={{
+                fontSize: 11,
+                color: "#554d40",
+                fontStyle: "italic",
+                marginTop: 6,
+              }}
+            >
+              Обери хоча б одну мітку
+            </div>
+          )}
         </div>
 
         <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
@@ -678,26 +753,20 @@ export default function Library({ session, onLogout, navigate }) {
   };
 
   const handleSave = async (form) => {
+    const payload = {
+      title: form.title,
+      author: form.author,
+      genre: form.genre,
+      publisher: form.publisher || null,
+      cover_url: form.cover_url || null,
+      tags: form.tags.join(","),
+    };
     if (modal?.book?.id) {
+      await supabase.from("books").update(payload).eq("id", modal.book.id);
+    } else {
       await supabase
         .from("books")
-        .update({
-          title: form.title,
-          author: form.author,
-          genre: form.genre,
-          status: form.status,
-          cover_url: form.cover_url || null,
-        })
-        .eq("id", modal.book.id);
-    } else {
-      await supabase.from("books").insert({
-        title: form.title,
-        author: form.author,
-        genre: form.genre,
-        status: form.status,
-        cover_url: form.cover_url || null,
-        user_id: session.user.id,
-      });
+        .insert({ ...payload, user_id: session.user.id });
     }
     setModal(null);
     fetchBooks();
@@ -709,17 +778,20 @@ export default function Library({ session, onLogout, navigate }) {
     fetchBooks();
   };
 
+  const counts = { want: 0, library: 0, done: 0 };
+  books.forEach((b) => {
+    parseTags(b.tags).forEach((tag) => {
+      if (counts[tag] !== undefined) counts[tag]++;
+    });
+  });
+
   const filtered = books.filter((b) => {
-    const matchFilter = filter === "all" || b.status === filter;
+    const bookTags = parseTags(b.tags);
+    const matchFilter = filter === "all" || bookTags.includes(filter);
     const matchSearch =
       b.title.toLowerCase().includes(search.toLowerCase()) ||
       (b.author || "").toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
-  });
-
-  const counts = { want: 0, library: 0, done: 0 };
-  books.forEach((b) => {
-    if (counts[b.status] !== undefined) counts[b.status]++;
   });
 
   const navItems = [
@@ -743,7 +815,6 @@ export default function Library({ session, onLogout, navigate }) {
         .filters-row { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; align-items: center; }
         .desktop-add-btn { display: inline-block; }
         .mobile-header { display: none; }
-
         @media (max-width: 900px) {
           .sidebar { display: none !important; }
           .sidebar.open { display: flex !important; position: fixed; top: 0; left: 0; bottom: 0; width: 280px; height: 100vh; z-index: 500; }
@@ -753,7 +824,6 @@ export default function Library({ session, onLogout, navigate }) {
           .desktop-add-btn { display: none !important; }
           .mobile-header { display: flex !important; align-items: center; justify-content: space-between; padding: 14px 16px; background: #120f0a; border-bottom: 1px solid #2e271c; position: sticky; top: 0; z-index: 100; width: 100%; }
         }
-
         @media (max-width: 380px) {
           .books-grid { grid-template-columns: 1fr; }
         }
@@ -767,7 +837,6 @@ export default function Library({ session, onLogout, navigate }) {
           color: "#e8dfc8",
         }}
       >
-        {/* MOBILE HEADER */}
         <div className="mobile-header">
           <div style={{ color: "#c8a96a", fontSize: 20, fontStyle: "italic" }}>
             ❧ Полиця
@@ -804,7 +873,6 @@ export default function Library({ session, onLogout, navigate }) {
           </div>
         </div>
 
-        {/* SIDEBAR */}
         <aside className={`sidebar${showMobileMenu ? " open" : ""}`}>
           {showMobileMenu && (
             <div
@@ -869,7 +937,6 @@ export default function Library({ session, onLogout, navigate }) {
               ❧ ✦ ❧
             </div>
           </div>
-
           <nav style={{ padding: "20px 0", flex: 1 }}>
             <div
               style={{
@@ -921,7 +988,6 @@ export default function Library({ session, onLogout, navigate }) {
               </div>
             ))}
           </nav>
-
           <div style={{ padding: "20px 24px", borderTop: "1px solid #2e271c" }}>
             <div
               style={{
@@ -996,7 +1062,6 @@ export default function Library({ session, onLogout, navigate }) {
           </div>
         </aside>
 
-        {/* MAIN */}
         <main className="lib-main">
           <div
             style={{
@@ -1069,7 +1134,6 @@ export default function Library({ session, onLogout, navigate }) {
             }}
           />
 
-          {/* STATS */}
           <div className="stats-grid">
             {[
               { label: "бажанки", count: counts.want, color: "#c8a96a" },
@@ -1107,7 +1171,6 @@ export default function Library({ session, onLogout, navigate }) {
             ))}
           </div>
 
-          {/* FILTERS */}
           <div className="filters-row">
             <div
               style={{
@@ -1165,7 +1228,6 @@ export default function Library({ session, onLogout, navigate }) {
             ))}
           </div>
 
-          {/* GRID */}
           {filtered.length === 0 ? (
             <div
               style={{
